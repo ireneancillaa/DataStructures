@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+struct data{
+	int age;
+	struct data *next;
+	struct data *prev;
+};
+
+struct data *head = NULL;
+struct data *tail = NULL;
+
+struct data *create_node(int age){
+	struct data *new_node = (struct data *) malloc(sizeof(struct data));
+	new_node -> next = NULL;
+	new_node -> prev = NULL;
+	new_node -> age = age;
+	
+	return new_node;
+}
+
+void print_double_linked_list(){
+	struct data *temp;
+	temp = head;
+	int count = 1;
+	
+	while(temp != NULL){
+		printf("data ke - %d : %d\n", count, temp -> age);
+		temp = temp -> next;
+		count++;
+	}
+}
+
+void push_head(int age){
+	struct data *new_node = create_node(age);
+	// ambil address yang ada di head
+	new_node -> next = head;
+	head -> prev = new_node;
+	
+	head = new_node;
+}
+
+void push_tail(int age){
+	struct data *new_node = create_node(age);
+	
+	new_node -> prev = tail;
+	tail -> next = new_node;
+	tail = new_node;
+}
+
+void push_mid(int age){
+	struct data *new_node = create_node(age);
+    
+	// membuat struct baru untuk menampung head sementara
+    struct data *temp = head;
+    int len = 0;
+	
+	// mencari panjang sebuah linked list
+    while(temp -> next != NULL){
+        temp = temp -> next;
+        len++;
+    }
+	
+	// mencari mid dari sebuah linked list
+    int mid;
+    if(len%2 == 0){
+        mid = len / 2;
+    }
+    else{
+        mid = (len + 1) / 2;
+    }
+	
+	// mengembalikan temp yang sudah digeser ke head
+    temp = head;
+	
+	// menggeser temp ke tepat sebelum mid
+    while(mid > 1){
+        temp = temp -> next;
+        mid--;
+    }
+	
+	// menyatakan kiri dan kanan dari sebuah mid
+    struct data *left = temp;
+    struct data *right = temp -> next;
+	
+	// menghubungkan node ke mid dengan prev dan nextnya
+    left -> next = new_node;
+    new_node -> next = right;
+    new_node -> prev = left;
+    right -> prev = new_node;
+}
+
+void pop_head(){
+	struct data *temp;
+	temp = head;
+	
+	head = head -> next;
+	head -> prev = NULL;
+	free(temp);
+}
+
+int main(){
+	
+	printf("double linked list\n");
+	head = create_node(2);
+	tail = create_node(5);
+	
+	head -> next = tail;
+	tail -> prev = head;
+	
+	push_head(1);
+	push_head(0);
+	push_tail(10);
+	push_mid(34);
+	
+	pop_head();
+	
+	print_double_linked_list();
+			
+	return 0;
+}
